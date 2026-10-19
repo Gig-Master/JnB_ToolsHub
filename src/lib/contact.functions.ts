@@ -12,7 +12,7 @@ const schema = z.object({
 // PLACEHOLDER — this simply logs submissions server-side.
 // Replace with real persistence (database table, email service, etc.).
 export const submitContact = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => schema.parse(data))
+  .validator((data: unknown) => schema.parse(data)) // <-- Changed from .inputValidator
   .handler(async ({ data }) => {
     console.log("[contact] new submission", {
       ...data,
