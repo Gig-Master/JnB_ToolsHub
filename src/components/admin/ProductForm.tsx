@@ -31,7 +31,12 @@ export function ProductForm({ initialData, categories, onClose, onSaved }: Props
   const [featuresText, setFeaturesText] = useState((initialData?.features ?? []).join("\n"));
   const [appsText, setAppsText] = useState((initialData?.applications ?? []).join("\n"));
 
-  const [images, setImages] = useState<ProductImageInput[]>(initialData?.images ?? []);
+  const [images, setImages] = useState<ProductImageInput[]>(
+  (initialData?.images ?? []).map((img) => ({
+    ...img,
+    storagePath: img.storagePath ?? undefined,
+  })),
+);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 

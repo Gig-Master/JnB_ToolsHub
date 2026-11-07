@@ -4,7 +4,61 @@ import { db } from "@/db";
 import { products, productImages } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth.server";
 import { uniqueSlug } from "@/lib/slug";
+import { z } from "zod";
 import { getSupabaseAdmin, PRODUCT_IMAGE_BUCKET } from "@/lib/supabase";
+
+/* ─────────────────────────────────────────────────────────────
+   INPUT VALIDATION (the server never trusts what the browser sends)
+   ───────────────────────────────────────────────────────────── */
+
+function parseOrThrow<T>(schema: z.ZodType<T, z.ZodTypeDef, unknown>, input: unknown): T {
+  const result = schema.safeParse(input);
+  if (!result.success) {
+    throw new Error(result.error.issues[0]?.message ?? "Invalid input");
+  }
+  return result.data;
+}
+
+const productSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string().trim().min(2, "Product name is required").max(200),
+  categoryId: z.string().uuid("Choose a category"),
+  subcategoryId: z.preprocess(
+    (v) => (v === "" ? null : v),
+    z.string().uuid().nullable().optional(),
+  ),
+  brand: z.string().trim().max(100),
+  price: z
+    .number({ invalid_type_error: "Price must be a number" })
+    .int("Price must be a whole number of shillings")
+    .min(0, "Price can't be negative")
+    .max(100_000_000, "Price is too large"),
+  shortDescription: z.string().trim().max(500, "Short description is too long"),
+  fullDescription: z.string().trim().max(10_000, "Full description is too long"),
+  specifications: z.record(z.string().max(100), z.string().max(500)),
+  features: z.array(z.string().trim().max(300)).max(50),
+  applications: z.array(z.string().trim().max(300)).max(50),
+  featured: z.boolean(),
+  inStock: z.boolean(),
+  images: z
+    .array(
+      z.object({
+        url: z
+          .string()
+          .url("Image URL is not valid")
+          .max(1000)
+          .refine((u) => u.startsWith("https://"), "Image URLs must use HTTPS"),
+        alt: z.string().trim().min(1, "Every image needs alt text").max(200),
+        storagePath: z.string().max(500).optional(),
+        isPrimary: z.boolean().optional(),
+      }),
+    )
+    .max(12, "A product can have at most 12 images"),
+});
+
+type ProductInput = z.input<typeof productSchema>;
+
+const idSchema = z.object({ id: z.string().uuid("Invalid product id") });
 
 /* ─────────────────────────────────────────────────────────────
    PUBLIC ENDPOINTS (Anyone can call these)
@@ -21,7 +75,7 @@ export const listProducts = createServerFn({ method: "GET" })
         orderBy: [desc(products.featured), desc(products.createdAt)],
       });
 
-      // FIX: Convert Date objects to strings to prevent Vercel serialization crashes
+      // Convert Date objects to strings to prevent Vercel serialization crashes
       return res.map((p) => ({
         ...p,
         createdAt: p.createdAt.toISOString(),
@@ -31,10 +85,10 @@ export const listProducts = createServerFn({ method: "GET" })
           createdAt: img.createdAt.toISOString(),
         })),
       }));
-    } catch (error: any) {
-      console.error("❌ FAILED TO FETCH PRODUCTS ON VERCEL:", error);
-      // THROW the error so the frontend UI can show it in the red box
-      throw new Error(error.message || String(error));
+    } catch (error) {
+      // Full detail stays in the server logs (Vercel → Logs). Visitors get a generic message.
+      console.error("Failed to fetch products:", error);
+      throw new Error("Unable to load products right now. Please try again.");
     }
   });
 
@@ -43,7 +97,7 @@ export const getProductBySlug = createServerFn({ method: "GET" })
   .validator((d: { slug: string }) => d)
   .handler(async ({ data }) => {
     return db.query.products.findFirst({
-      where: eq(products.slug, data.slug),
+      where: eq(products.slug, String(data.slug ?? "").slice(0, 200)),
       with: {
         category: true,
         subcategory: true,
@@ -58,24 +112,7 @@ export const getProductBySlug = createServerFn({ method: "GET" })
 
 /** Create or Update a product */
 export const saveProduct = createServerFn({ method: "POST" })
-  .validator(
-    (d: {
-      id?: string;
-      name: string;
-      categoryId: string;
-      subcategoryId?: string | null;
-      brand: string;
-      price: number;
-      shortDescription: string;
-      fullDescription: string;
-      specifications: Record<string, string>;
-      features: string[];
-      applications: string[];
-      featured: boolean;
-      inStock: boolean;
-      images: { url: string; alt: string; storagePath?: string; isPrimary?: boolean }[];
-    }) => d,
-  )
+  .validator((d: ProductInput) => parseOrThrow(productSchema, d))
   .handler(async ({ data }) => {
     await requireAdmin();
 
@@ -130,7 +167,7 @@ export const saveProduct = createServerFn({ method: "POST" })
 
 /** Delete a product (and its images via CASCADE and Supabase Storage) */
 export const deleteProduct = createServerFn({ method: "POST" })
-  .validator((d: { id: string }) => d)
+  .validator((d: { id: string }) => parseOrThrow(idSchema, d))
   .handler(async ({ data }) => {
     await requireAdmin();
 

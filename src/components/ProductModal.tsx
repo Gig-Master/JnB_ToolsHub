@@ -1,16 +1,36 @@
-import { X, CheckCircle2, MessageCircle, ShieldCheck, Truck, Phone } from "lucide-react";
+import {
+  X, CheckCircle2, MessageCircle, ShieldCheck, Truck, Phone, ShoppingCart, Check, Minus, Plus,
+} from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { whatsappHref, whatsappProductMessage, phoneHref } from "@/data/business";
 import type { ProductDTO } from "@/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useCart } from "@/lib/cart";
 
-export function ProductModal({ 
-  product, 
-  onClose 
-}: { 
-  product: ProductDTO | null; 
-  onClose: () => void; 
+export function ProductModal({
+  product,
+  onClose,
+}: {
+  product: ProductDTO | null;
+  onClose: () => void;
+  onSelect?: (p: ProductDTO) => void; // products.tsx passes this; accepting it fixes a TypeScript error
 }) {
+  const { addItem } = useCart();
+  const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
+
+  // Reset the quantity when a different product is opened
+  useEffect(() => {
+    setQty(1);
+    setAdded(false);
+  }, [product?.id]);
+
+  useEffect(() => {
+    if (!added) return;
+    const t = window.setTimeout(() => setAdded(false), 1800);
+    return () => window.clearTimeout(t);
+  }, [added]);
+
   // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -79,6 +99,48 @@ export function ProductModal({
           <p className="mt-2 text-sm text-muted-foreground">{product.shortDescription}</p>
           
           <p className="mt-4 text-3xl font-extrabold text-primary">{formatPrice(product.price)}</p>
+
+                    {product.inStock && (
+            <div className="mt-6 flex items-center gap-3">
+              <div className="inline-flex items-center rounded-full border border-border">
+                <button
+                  type="button"
+                  aria-label="Decrease quantity"
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  className="p-3 cursor-pointer"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <span className="w-8 text-center font-semibold">{qty}</span>
+                <button
+                  type="button"
+                  aria-label="Increase quantity"
+                  onClick={() => setQty((q) => Math.min(99, q + 1))}
+                  className="p-3 cursor-pointer"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  addItem(product, qty);
+                  setAdded(true);
+                }}
+                className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground hover:brightness-95 transition cursor-pointer"
+              >
+                {added ? (
+                  <>
+                    <Check className="h-5 w-5" /> Added to cart
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart className="h-5 w-5" /> Add to cart
+                  </>
+                )}
+              </button>
+            </div>
+          )}
 
           <div className="mt-6 flex gap-3">
             <a

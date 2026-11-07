@@ -1,7 +1,9 @@
-import { MessageCircle, Eye, CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { MessageCircle, Eye, CheckCircle2, ShoppingCart, Check } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import type { ProductDTO } from "@/types";
 import { whatsappHref, whatsappProductMessage } from "@/data/business";
+import { useCart } from "@/lib/cart";
 
 interface Props {
   product: ProductDTO;
@@ -9,7 +11,15 @@ interface Props {
 }
 
 export function ProductCard({ product, onView }: Props) {
-  // Find the primary image from the new DB images array
+  const { addItem } = useCart();
+  const [added, setAdded] = useState(false);
+
+  useEffect(() => {
+    if (!added) return;
+    const t = window.setTimeout(() => setAdded(false), 1500);
+    return () => window.clearTimeout(t);
+  }, [added]);
+
   const primaryImage = product.images?.find((img) => img.isPrimary) || product.images?.[0];
 
   return (
@@ -40,10 +50,6 @@ export function ProductCard({ product, onView }: Props) {
       </div>
 
       <div className="p-5 flex flex-col flex-1">
-        {/* Note: We removed the hardcoded product.subcategory string check here 
-            because in the new DB, subcategory is an ID. We can add it back later 
-            if we do a join in the query. */}
-
         <h3 className="font-semibold text-foreground text-base leading-snug line-clamp-2">
           {product.name}
         </h3>
@@ -52,22 +58,46 @@ export function ProductCard({ product, onView }: Props) {
         </p>
         <p className="mt-3 text-lg font-bold text-primary">{formatPrice(product.price)}</p>
 
-        <div className="mt-4 flex gap-2 pt-3 border-t border-border">
+        <div className="mt-4 pt-3 border-t border-border space-y-2">
           <button
-            onClick={() => onView(product)}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full border border-primary text-primary text-sm font-semibold px-3 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
+            type="button"
+            disabled={!product.inStock}
+            onClick={() => {
+              addItem(product);
+              setAdded(true);
+            }}
+            className="w-full inline-flex items-center justify-center gap-1.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold px-3 py-2.5 hover:brightness-95 transition disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           >
-            <Eye className="h-4 w-4" /> Details
+            {!product.inStock ? (
+              "Out of stock"
+            ) : added ? (
+              <>
+                <Check className="h-4 w-4" /> Added
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="h-4 w-4" /> Add to cart
+              </>
+            )}
           </button>
 
-          <a
-            href={whatsappHref(whatsappProductMessage(product.name, product.price))}
-            target="_blank"
-            rel="noreferrer"
-            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-accent text-accent-foreground text-sm font-semibold px-3 py-2 hover:brightness-95 transition"
-          >
-            <MessageCircle className="h-4 w-4" /> Order
-          </a>
+          <div className="flex gap-2">
+            <button
+              onClick={() => onView(product)}
+              className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full border border-primary text-primary text-sm font-semibold px-3 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
+            >
+              <Eye className="h-4 w-4" /> Details
+            </button>
+
+            <a
+              href={whatsappHref(whatsappProductMessage(product.name, product.price))}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-accent text-accent-foreground text-sm font-semibold px-3 py-2 hover:brightness-95 transition"
+            >
+              <MessageCircle className="h-4 w-4" /> Order
+            </a>
+          </div>
         </div>
       </div>
     </article>

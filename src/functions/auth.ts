@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getClientIp, hitRateLimit, clearRateLimit } from "@/lib/rate-limit.server";
 import {
   getCookie,
   setCookie,
@@ -12,13 +13,23 @@ import {
   verifyPassword,
 } from "@/lib/auth.server";
 
-/* ── Login ── */
 export const loginAdmin = createServerFn({ method: "POST" })
   .validator((d: { password: string }) => d)
   .handler(async ({ data }) => {
-    if (!verifyPassword(data.password)) {
+    const key = `admin-login:${getClientIp()}`;
+    const { allowed } = await hitRateLimit(key, 5, 15 * 60);
+    if (!allowed) {
+      return {
+        ok: false as const,
+        error: "Too many attempts. Please try again in 15 minutes.",
+      };
+    }
+
+    if (!verifyPassword(String(data.password ?? "").slice(0, 200))) {
       return { ok: false as const, error: "Invalid password" };
     }
+
+    await clearRateLimit(key); // a correct password resets the counter
 
     const token = await createSessionToken();
     setCookie(SESSION_COOKIE, token, {

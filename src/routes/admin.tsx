@@ -1,12 +1,12 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { checkAdmin, logoutAdmin } from "@/functions/auth";
-import { LayoutDashboard, LogOut, ExternalLink } from "lucide-react";
+import { LayoutDashboard, LogOut, ExternalLink, ShoppingBag } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async ({ location }) => {
     // Allow access to the login page without being authenticated
     if (location.pathname === "/admin/login") return;
-    
+
     // Check auth for all other /admin routes
     const { authed } = await checkAdmin();
     if (!authed) {
@@ -38,12 +38,20 @@ function AdminLayout() {
           JnB Admin
         </div>
         <nav className="flex-1 p-4 space-y-2">
-          <Link 
-            to="/admin" 
+          <Link
+            to="/admin"
+            activeOptions={{ exact: true }}
             className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors [&.active]:bg-white/10"
             activeProps={{ className: "active" }}
           >
-            <LayoutDashboard size={20} /> Dashboard
+            <LayoutDashboard size={20} /> Products
+          </Link>
+          <Link
+            to="/admin/orders"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors [&.active]:bg-white/10"
+            activeProps={{ className: "active" }}
+          >
+            <ShoppingBag size={20} /> Orders
           </Link>
         </nav>
         <div className="p-4 border-t border-white/10 space-y-2">
@@ -58,6 +66,26 @@ function AdminLayout() {
 
       {/* Main Content */}
       <main className="flex-1 p-8">
+        {/* Phone navigation (the sidebar is hidden on small screens) */}
+        <nav className="mb-6 flex gap-3 text-sm font-semibold md:hidden">
+          <Link
+            to="/admin"
+            activeOptions={{ exact: true }}
+            className="rounded-full bg-white px-4 py-2 border border-slate-200"
+          >
+            Products
+          </Link>
+          <Link
+            to="/admin/orders"
+            className="rounded-full bg-white px-4 py-2 border border-slate-200"
+          >
+            Orders
+          </Link>
+          <button onClick={handleLogout} className="ml-auto rounded-full px-4 py-2 text-red-500">
+            Log out
+          </button>
+        </nav>
+
         <Outlet />
       </main>
     </div>

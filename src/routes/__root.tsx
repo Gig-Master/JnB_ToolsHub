@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { CartProvider } from "@/lib/cart";
 import {
   Outlet,
   createRootRouteWithContext,
@@ -9,7 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { type ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
-
+import type { ErrorComponentProps } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
@@ -32,10 +33,11 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
+  // Log details for us, but never show them to visitors
   console.error(error);
   const router = useRouter();
-  
+
   return (
     <div className="flex min-h-[70vh] items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -81,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: BUSINESS.description },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-        links: [
+    links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
       { rel: "icon", type: "image/png", sizes: "48x48", href: "/favicon-48x48.png" },
@@ -120,14 +122,16 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isAdmin = pathname.startsWith("/admin");
-  
+
   return (
     <QueryClientProvider client={queryClient}>
-      {!isAdmin && <Nav />}
-      <main id="main">
-        <Outlet />
-      </main>
-      {!isAdmin && <Footer />}
+      <CartProvider>
+        {!isAdmin && <Nav />}
+        <main id="main">
+          <Outlet />
+        </main>
+        {!isAdmin && <Footer />}
+      </CartProvider>
     </QueryClientProvider>
   );
 }

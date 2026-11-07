@@ -50,3 +50,9 @@ export const whatsappHref = (message?: string) =>
   `https://wa.me/${BUSINESS.whatsapp}${message ? `?text=${encodeURIComponent(message)}` : ""}`;
 export const whatsappProductMessage = (productName: string, price?: number) =>
   `Hello JnB, I'm interested in ${productName}${price ? ` (listed at KSh ${price.toLocaleString()})` : ""}. Please confirm availability and delivery options.`;
+export const DELIVERY = {
+  /** Flat fee (KSh) for delivery inside Nairobi. Change this one line to adjust. */
+  nairobiFee: 500,
+  /** Counties where the flat fee applies. Everywhere else is quoted by you. */
+  flatFeeCounties: ["Nairobi"],
+} as const;

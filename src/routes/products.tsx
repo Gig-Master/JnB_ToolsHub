@@ -160,12 +160,13 @@ function ProductsPage() {
       </section>
 
       {/* DISPLAY THE ERROR HERE */}
-      {productsError && (
+            {productsError && (
         <div className="container-x py-6">
-          <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-xl">
-            <h2 className="text-xl font-bold mb-2">Failed to load products from Database</h2>
-            <p className="font-mono text-sm bg-white p-4 rounded border border-red-100 overflow-auto">
-              {productsError.message}
+          <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">
+            <h2 className="mb-1 text-lg font-bold">We couldn't load the products</h2>
+            <p className="text-sm">
+              Please refresh the page or try again in a moment. If it keeps happening, contact us
+              on WhatsApp.
             </p>
           </div>
         </div>

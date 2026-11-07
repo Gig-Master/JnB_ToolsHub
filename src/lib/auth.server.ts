@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { getCookie } from "@tanstack/react-start/server";
-
+import { createHash, timingSafeEqual } from "node:crypto";
 function getSecret(): Uint8Array {
   const s = process.env.ADMIN_JWT_SECRET;
   if (!s || s.length < 32) {
@@ -37,15 +37,17 @@ export async function verifySessionToken(
   }
 }
 
-/** Checks the plaintext password against the server-only env var. */
+/** Checks the plaintext password against the server-only env var, in constant time. */
 export function verifyPassword(input: string): boolean {
   const expected = process.env.ADMIN_PASSWORD;
   if (!expected) {
     throw new Error("ADMIN_PASSWORD is not set. Add it to .env.local.");
   }
-  return input === expected;
+  // Hash both so the two buffers always have the same length
+  const a = createHash("sha256").update(input).digest();
+  const b = createHash("sha256").update(expected).digest();
+  return timingSafeEqual(a, b);
 }
-
 /** 
  * Guard function to be used inside other server functions.
  * Throws an error if the user is not authenticated.
