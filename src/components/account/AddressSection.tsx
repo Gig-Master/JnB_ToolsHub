@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MapPin, Plus, Pencil, Trash2, Star } from "lucide-react";
+import { MapPin, Plus, Pencil, Trash2, Star } from "@/components/icons";
 import { KENYA_COUNTIES } from "@/data/kenya";
 import {
   listMyAddresses,

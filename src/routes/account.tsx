@@ -1,6 +1,6 @@
 import { createFileRoute, redirect, useRouter, Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut } from "lucide-react";
+import { LogOut } from "@/components/icons";
 import { getMe, logoutCustomer } from "@/functions/customer";
 import { AddressSection } from "@/components/account/AddressSection";
 import { OrderHistory } from "@/components/account/OrderHistory";

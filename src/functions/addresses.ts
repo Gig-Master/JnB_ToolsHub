@@ -38,7 +38,7 @@ const addressSchema = z.object({
   label: z.string().trim().min(1, "Give this address a label, e.g. Home").max(30),
   recipientName: z.string().trim().min(2, "Enter the recipient's name").max(80),
   phone: z.string().trim().min(1, "Enter a phone number").max(20),
-  county: z.enum(KENYA_COUNTIES, { errorMap: () => ({ message: "Choose a county" }) }),
+  county: z.enum(KENYA_COUNTIES, { error: "Choose a county" }),
   town: z.string().trim().min(2, "Enter the town or area").max(80),
   street: z.string().trim().min(3, "Enter the street, building or house details").max(160),
   landmark: z.string().trim().max(200).optional(),

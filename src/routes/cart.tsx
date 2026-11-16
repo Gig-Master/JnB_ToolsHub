@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Minus, Plus, Trash2, ShoppingBag, MessageCircle } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, MessageCircle } from "@/components/icons";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/utils";
 import { whatsappHref } from "@/data/business";

@@ -1,4 +1,4 @@
-import { Check, X } from "lucide-react";
+import { Check, X } from "@/components/icons";
 import { checkPassword, passwordStrength } from "@/lib/password-strength";
 
 const BAR_COLORS = ["bg-slate-200", "bg-red-500", "bg-amber-500", "bg-lime-500", "bg-emerald-600"];

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Package } from "lucide-react";
+import { Package } from "@/components/icons";
 import { listMyOrders } from "@/functions/orders";
 import { statusBadge, statusLabel } from "@/lib/order-status";
 import { formatPrice } from "@/lib/utils";

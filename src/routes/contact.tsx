@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Send, CheckCircle2 } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, MessageCircle, Send, CheckCircle2 } from "@/components/icons";
 import { useState } from "react";
 import { z } from "zod";
 import { BUSINESS, phoneHref, emailHref, whatsappHref, MAP } from "@/data/business";

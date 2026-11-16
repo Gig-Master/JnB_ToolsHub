@@ -1,6 +1,6 @@
 import {
   X, CheckCircle2, MessageCircle, ShieldCheck, Truck, Phone, ShoppingCart, Check, Minus, Plus,
-} from "lucide-react";
+} from "@/components/icons";
 import { formatPrice } from "@/lib/utils";
 import { whatsappHref, whatsappProductMessage, phoneHref } from "@/data/business";
 import type { ProductDTO } from "@/types";

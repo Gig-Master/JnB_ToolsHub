@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  Drill, Tractor, Cpu, Plug, Sun, Scissors, Zap, Lock, Wrench,
-  ShieldCheck, BadgeDollarSign, HeartHandshake, MessageCircle, Phone,
-  MapPin, Clock, Star, ArrowRight, Sparkles, Truck, Award,
-} from "lucide-react";
+  FaScrewdriverWrench, FaTractor, FaMicrochip, FaPlug, FaSun, FaScissors, FaBolt, FaLock, FaWrench,
+  FaShieldHalved, FaTags, FaHandshake, FaWhatsapp, FaPhone, FaLocationDot, FaClock, FaStar,
+  FaArrowRight, FaTruckFast, FaAward, FaStore, FaThumbsUp,
+} from "react-icons/fa6";
+import type { IconType } from "react-icons";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BUSINESS, phoneHref, whatsappHref, MAP } from "@/data/business";
@@ -15,8 +16,17 @@ import type { ProductDTO } from "@/types";
 
 const heroImage = "/images/site/jnb-shop-interior.jpg";
 
-const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  Drill, Tractor, Cpu, Plug, Sun, Scissors, Zap, Lock, Wrench,
+// Category icon names stored in the database -> classic solid icons
+const ICONS: Record<string, IconType> = {
+  Drill: FaScrewdriverWrench,
+  Tractor: FaTractor,
+  Cpu: FaMicrochip,
+  Plug: FaPlug,
+  Sun: FaSun,
+  Scissors: FaScissors,
+  Zap: FaBolt,
+  Lock: FaLock,
+  Wrench: FaWrench,
 };
 
 export const Route = createFileRoute("/")({
@@ -54,10 +64,10 @@ function Home() {
 /* ─────────────── Hero ─────────────── */
 function Hero() {
   const perks = [
-    { icon: ShieldCheck, label: "Genuine Products" },
-    { icon: BadgeDollarSign, label: "Competitive Prices" },
-    { icon: HeartHandshake, label: "Expert Support" },
-    { icon: Truck, label: "Fast Response" },
+    { icon: FaShieldHalved, label: "Genuine Products" },
+    { icon: FaTags, label: "Competitive Prices" },
+    { icon: FaHandshake, label: "Expert Support" },
+    { icon: FaTruckFast, label: "Fast Response" },
   ];
   return (
     <section className="relative overflow-hidden bg-secondary text-white">
@@ -72,7 +82,7 @@ function Hero() {
       <div className="container-x relative py-20 md:py-28 grid lg:grid-cols-2 gap-12 items-center">
         <div>
           <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-xs font-medium">
-            <Sparkles className="h-3.5 w-3.5 text-accent" /> Nairobi's trusted hardware & electronics store
+            <FaStore className="h-3.5 w-3.5 text-accent" /> Nairobi's trusted hardware & electronics store
           </span>
           <h1 className="mt-5 text-4xl sm:text-5xl lg:text-[56px] font-extrabold leading-[1.05] tracking-tight">
             Quality <span className="text-accent">Power Tools</span> & Digital Electronics You Can Trust
@@ -83,10 +93,10 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/products" className="btn-accent">
-              View Products <ArrowRight className="h-4 w-4" />
+              View Products <FaArrowRight className="h-3.5 w-3.5" />
             </Link>
             <a href={whatsappHref("Hello JnB, I'd like to place an order.")} target="_blank" rel="noreferrer" className="btn-outline !border-white !text-white hover:!bg-white hover:!text-secondary">
-              <MessageCircle className="h-4 w-4" /> Order on WhatsApp
+              <FaWhatsapp className="h-4 w-4" /> Order on WhatsApp
             </a>
           </div>
         </div>
@@ -97,7 +107,7 @@ function Hero() {
               className="rounded-2xl bg-white/10 backdrop-blur border border-white/15 p-5 hover:bg-white/15 transition animate-float"
               style={{ animationDelay: `${i * 0.4}s` }}
             >
-              <p.icon className="h-8 w-8 text-accent" />
+              <p.icon className="h-7 w-7 text-accent" />
               <p className="mt-3 font-semibold">{p.label}</p>
             </div>
           ))}
@@ -122,13 +132,13 @@ function Categories() {
           title="Shop by category"
           subtitle="Everything a contractor, technician, farmer or homeowner might need — under one roof."
         />
-        
+
         {isLoading ? (
           <p className="text-center mt-10 text-muted-foreground">Loading categories...</p>
         ) : (
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((c) => {
-              const Icon = ICONS[c.icon] ?? Wrench;
+              const Icon = ICONS[c.icon] ?? FaWrench;
               return (
                 <Link
                   key={c.id}
@@ -137,12 +147,12 @@ function Categories() {
                   className="card-surface p-6 group border border-transparent hover:border-primary/20"
                 >
                   <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary grid place-items-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    <Icon className="h-6 w-6" />
+                    <Icon className="h-5 w-5" />
                   </div>
                   <h3 className="mt-4 font-semibold text-lg">{c.name}</h3>
                   <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2">{c.description}</p>
                   <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:gap-2 transition-all">
-                    Browse <ArrowRight className="h-4 w-4" />
+                    Browse <FaArrowRight className="h-3 w-3" />
                   </span>
                 </Link>
               );
@@ -157,12 +167,12 @@ function Categories() {
 /* ─────────────── Why Us ─────────────── */
 function WhyUs() {
   const items = [
-    { icon: ShieldCheck, title: "Genuine & Quality Products", body: "Only authentic stock sourced from trusted suppliers and brands." },
-    { icon: BadgeDollarSign, title: "Affordable Prices", body: "Competitive pricing for contractors, businesses and individuals." },
-    { icon: Award, title: "Trusted Brands", body: "Bosch, Makita, DeWalt, Yale, Schneider, Honda and many more." },
-    { icon: HeartHandshake, title: "Expert Technical Advice", body: "Our team helps you pick the right tool for the job." },
-    { icon: Sparkles, title: "Excellent Customer Service", body: "Friendly, professional service before and after every sale." },
-    { icon: MapPin, title: "Convenient Nairobi Location", body: "Royal Palm Mall, Mfangano Street — easy to reach in the CBD." },
+    { icon: FaShieldHalved, title: "Genuine & Quality Products", body: "Only authentic stock sourced from trusted suppliers and brands." },
+    { icon: FaTags, title: "Affordable Prices", body: "Competitive pricing for contractors, businesses and individuals." },
+    { icon: FaAward, title: "Trusted Brands", body: "Bosch, Makita, DeWalt, Yale, Schneider, Honda and many more." },
+    { icon: FaHandshake, title: "Expert Technical Advice", body: "Our team helps you pick the right tool for the job." },
+    { icon: FaThumbsUp, title: "Excellent Customer Service", body: "Friendly, professional service before and after every sale." },
+    { icon: FaLocationDot, title: "Convenient Nairobi Location", body: "Royal Palm Mall, Mfangano Street — easy to reach in the CBD." },
   ];
   return (
     <section className="relative overflow-hidden py-20 bg-white">
@@ -197,14 +207,14 @@ function Featured({ onView }: { onView: (p: ProductDTO) => void }) {
         <div className="flex items-end justify-between gap-4 flex-wrap">
           <SectionHeader eyebrow="Bestsellers" title="Featured products" align="left" />
           <Link to="/products" className="text-primary font-semibold text-sm inline-flex items-center gap-1 hover:gap-2 transition-all">
-            View all <ArrowRight className="h-4 w-4" />
+            View all <FaArrowRight className="h-3 w-3" />
           </Link>
         </div>
-        
+
         {isLoading ? (
-           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-             {[1, 2, 3, 4].map(i => <div key={i} className="animate-pulse bg-slate-200 rounded-2xl h-80" />)}
-           </div>
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => <div key={i} className="animate-pulse bg-slate-200 rounded-2xl h-80" />)}
+          </div>
         ) : featured.length === 0 ? (
           <p className="mt-10 text-muted-foreground">No featured products at the moment.</p>
         ) : (
@@ -244,7 +254,7 @@ function AboutPreview() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link to="/contact" className="btn-primary">Learn More</Link>
             <a href={whatsappHref()} target="_blank" rel="noreferrer" className="btn-outline">
-              <MessageCircle className="h-4 w-4" /> Chat with us
+              <FaWhatsapp className="h-4 w-4" /> Chat with us
             </a>
           </div>
         </div>
@@ -268,7 +278,7 @@ function Testimonials() {
         <SectionHeader eyebrow="Customer stories" title="What our customers say" />
         <div className="mt-10 max-w-3xl mx-auto card-surface p-8 md:p-10 text-center">
           <div className="flex justify-center gap-1 text-accent">
-            {Array.from({ length: 5 }).map((_, k) => <Star key={k} className="h-5 w-5 fill-accent" />)}
+            {Array.from({ length: 5 }).map((_, k) => <FaStar key={k} className="h-4 w-4" />)}
           </div>
           <p className="mt-6 text-lg text-foreground leading-relaxed">"{t.text}"</p>
           <p className="mt-6 font-semibold">{t.name}</p>
@@ -298,14 +308,14 @@ function LocationPreview() {
           <SectionHeader eyebrow="Visit us" title="Find our shop" align="left" />
           <ul className="mt-8 space-y-5">
             <li className="flex gap-4">
-              <div className="h-11 w-11 rounded-xl bg-primary/10 text-primary grid place-items-center shrink-0"><MapPin className="h-5 w-5" /></div>
+              <div className="h-11 w-11 rounded-xl bg-primary/10 text-primary grid place-items-center shrink-0"><FaLocationDot className="h-5 w-5" /></div>
               <div>
                 <p className="font-semibold">Address</p>
                 <p className="text-muted-foreground text-sm">{BUSINESS.address.line1}, {BUSINESS.address.line2}, {BUSINESS.address.city}</p>
               </div>
             </li>
             <li className="flex gap-4">
-              <div className="h-11 w-11 rounded-xl bg-primary/10 text-primary grid place-items-center shrink-0"><Clock className="h-5 w-5" /></div>
+              <div className="h-11 w-11 rounded-xl bg-primary/10 text-primary grid place-items-center shrink-0"><FaClock className="h-5 w-5" /></div>
               <div>
                 <p className="font-semibold">Business hours</p>
                 {BUSINESS.hours.map((h) => (
@@ -315,7 +325,7 @@ function LocationPreview() {
             </li>
           </ul>
           <a href={MAP.directionsUrl} target="_blank" rel="noreferrer" className="btn-primary mt-8">
-            <MapPin className="h-4 w-4" /> Get Directions
+            <FaLocationDot className="h-4 w-4" /> Get Directions
           </a>
         </div>
         <div className="rounded-2xl overflow-hidden aspect-video bg-muted shadow-card">
@@ -344,10 +354,10 @@ function FinalCTA() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3 justify-center">
             <a href={whatsappHref()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white text-accent font-semibold px-6 py-3 hover:brightness-95 transition">
-              <MessageCircle className="h-5 w-5" /> WhatsApp Now
+              <FaWhatsapp className="h-5 w-5" /> WhatsApp Now
             </a>
             <a href={phoneHref} className="inline-flex items-center gap-2 rounded-full border-2 border-white text-white font-semibold px-6 py-3 hover:bg-white hover:text-accent transition">
-              <Phone className="h-5 w-5" /> Call Us
+              <FaPhone className="h-4 w-4" /> Call Us
             </a>
           </div>
         </div>

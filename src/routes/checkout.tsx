@@ -1,7 +1,7 @@
 import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { MapPin, Store, Smartphone, Banknote } from "lucide-react";
+import { MapPin, Store, Smartphone, Banknote } from "@/components/icons";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/utils";
 import { getMe } from "@/functions/customer";

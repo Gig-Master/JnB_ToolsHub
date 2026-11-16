@@ -11,7 +11,7 @@ import { getSupabaseAdmin, PRODUCT_IMAGE_BUCKET } from "@/lib/supabase";
    INPUT VALIDATION (the server never trusts what the browser sends)
    ───────────────────────────────────────────────────────────── */
 
-function parseOrThrow<T>(schema: z.ZodType<T, z.ZodTypeDef, unknown>, input: unknown): T {
+function parseOrThrow<S extends z.ZodType>(schema: S, input: unknown): z.output<S> {
   const result = schema.safeParse(input);
   if (!result.success) {
     throw new Error(result.error.issues[0]?.message ?? "Invalid input");
@@ -29,7 +29,7 @@ const productSchema = z.object({
   ),
   brand: z.string().trim().max(100),
   price: z
-    .number({ invalid_type_error: "Price must be a number" })
+    .number({ error: "Price must be a number" })
     .int("Price must be a whole number of shillings")
     .min(0, "Price can't be negative")
     .max(100_000_000, "Price is too large"),

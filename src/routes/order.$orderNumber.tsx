@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
-import { CheckCircle2, MessageCircle } from "lucide-react";
+import { CheckCircle2, MessageCircle } from "@/components/icons";
 import { getMe } from "@/functions/customer";
 import { getMyOrder } from "@/functions/orders";
 import { formatPrice } from "@/lib/utils";

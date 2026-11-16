@@ -13,7 +13,7 @@ import {
   Scissors,
   Zap,
   Lock,
-} from "lucide-react";
+} from "@/components/icons";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useProducts } from "@/hooks/useProducts";
