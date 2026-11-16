@@ -1,13 +1,13 @@
-// Business constants — replace placeholders with real values before launch.
-// Order of replacement (search these strings across the repo):
-//   PLACEHOLDER_WHATSAPP_NUMBER, PLACEHOLDER_PHONE_NUMBER, PLACEHOLDER_EMAIL,
-//   PLACEHOLDER_MAP_IFRAME
+// Business constants - single source of truth for the whole site
+// (pages, footer, structured data for search/AI engines, FAQ answers).
+export const SITE_URL = "https://www.jnbpowertools.co.ke";
+
 export const BUSINESS = {
   name: "JnB Power Tools & Digital Electronics",
   shortName: "JnB Power Tools",
   tagline: "Quality Power Tools & Digital Electronics You Can Trust",
   description:
-    "Trusted Nairobi supplier of genuine power tools, agricultural machinery, electronics, electrical accessories, solar systems, salon and barber equipment, locks, padlocks and general hardware — for contractors, technicians, electricians, farmers and homeowners.",
+    "Trusted Nairobi supplier of genuine power tools, agricultural machinery, electronics, electrical accessories, solar systems, salon and barber equipment, locks, padlocks and general hardware - for contractors, technicians, electricians, farmers and homeowners.",
   address: {
     line1: "Shop AG11, Magic Business Centre (Royal Palm Mall)",
     line2: "Mfangano Street",
@@ -21,7 +21,7 @@ export const BUSINESS = {
   // Contact email
   email: "jnbtools@gmail.com",
   hours: [
-    { day: "Monday – Saturday", time: "5:50 AM – 9:30 PM" },
+    { day: "Monday - Saturday", time: "5:50 AM - 9:30 PM" },
     { day: "Sunday", time: "Closed" },
   ],
   socials: {
@@ -30,6 +30,16 @@ export const BUSINESS = {
     twitter: "#",
   },
 } as const;
+
+/** Opening hours in machine-readable form (used by search / AI engines). */
+export const OPENING = {
+  days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  opens: "05:50",
+  closes: "21:30",
+} as const;
+
+/** "+254 740 151 986" style, for reading out loud and for FAQ answers. */
+export const phoneDisplay = `+${BUSINESS.phone.slice(0, 3)} ${BUSINESS.phone.slice(3, 6)} ${BUSINESS.phone.slice(6, 9)} ${BUSINESS.phone.slice(9)}`;
 
 export const MAP = {
   lat: -1.2853274,

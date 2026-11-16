@@ -2,12 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   FaScrewdriverWrench, FaTractor, FaMicrochip, FaPlug, FaSun, FaScissors, FaBolt, FaLock, FaWrench,
   FaShieldHalved, FaTags, FaHandshake, FaWhatsapp, FaPhone, FaLocationDot, FaClock, FaStar,
-  FaArrowRight, FaTruckFast, FaAward, FaStore, FaThumbsUp,
+  FaArrowRight, FaTruckFast, FaAward, FaStore, FaThumbsUp, FaChevronDown,
 } from "react-icons/fa6";
 import type { IconType } from "react-icons";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BUSINESS, phoneHref, whatsappHref, MAP } from "@/data/business";
+import { BUSINESS, phoneHref, whatsappHref, MAP, SITE_URL } from "@/data/business";
+import { FAQ, FAQ_JSONLD } from "@/data/faq";
 import { useProducts } from "@/hooks/useProducts";
 import { listCategories } from "@/functions/categories";
 import { ProductCard } from "@/components/products/ProductCard";
@@ -32,13 +33,16 @@ const ICONS: Record<string, IconType> = {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "JnB Power Tools & Digital Electronics — Nairobi Hardware & Solar" },
+      { title: "JnB Power Tools & Digital Electronics - Nairobi Hardware & Solar" },
       { name: "description", content: "Nairobi's trusted supplier of power tools, solar systems, electrical accessories, electronics, agricultural machinery and hardware. Visit us at Royal Palm Mall, Mfangano Street." },
-      { property: "og:title", content: "JnB Power Tools & Digital Electronics — Nairobi" },
+      { property: "og:title", content: "JnB Power Tools & Digital Electronics - Nairobi" },
       { property: "og:description", content: "Genuine tools, solar and electricals at fair prices. Order via WhatsApp today." },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: SITE_URL + "/" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/" }],
+    scripts: [
+      { type: "application/ld+json", children: JSON.stringify(FAQ_JSONLD) },
+    ],
   }),
   component: Home,
 });
@@ -55,13 +59,14 @@ function Home() {
       <AboutPreview />
       <Testimonials />
       <LocationPreview />
+      <Faq />
       <FinalCTA />
       <ProductModal product={active} onClose={() => setActive(null)} onSelect={setActive} />
     </>
   );
 }
 
-/* ─────────────── Hero ─────────────── */
+/* --- Hero --- */
 function Hero() {
   const perks = [
     { icon: FaShieldHalved, label: "Genuine Products" },
@@ -78,7 +83,7 @@ function Hero() {
           className="h-full w-full object-cover"
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-br from-secondary via-secondary/95 to-primary/60" />
+      <div className="absolute inset-0 hero-overlay" />
       <div className="container-x relative py-20 md:py-28 grid lg:grid-cols-2 gap-12 items-center">
         <div>
           <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-xs font-medium">
@@ -117,7 +122,7 @@ function Hero() {
   );
 }
 
-/* ─────────────── Categories ─────────────── */
+/* --- Categories --- */
 function Categories() {
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["categories"],
@@ -130,7 +135,7 @@ function Categories() {
         <SectionHeader
           eyebrow="What we stock"
           title="Shop by category"
-          subtitle="Everything a contractor, technician, farmer or homeowner might need — under one roof."
+          subtitle="Everything a contractor, technician, farmer or homeowner might need - under one roof."
         />
 
         {isLoading ? (
@@ -164,7 +169,7 @@ function Categories() {
   );
 }
 
-/* ─────────────── Why Us ─────────────── */
+/* --- Why Us --- */
 function WhyUs() {
   const items = [
     { icon: FaShieldHalved, title: "Genuine & Quality Products", body: "Only authentic stock sourced from trusted suppliers and brands." },
@@ -172,7 +177,7 @@ function WhyUs() {
     { icon: FaAward, title: "Trusted Brands", body: "Bosch, Makita, DeWalt, Yale, Schneider, Honda and many more." },
     { icon: FaHandshake, title: "Expert Technical Advice", body: "Our team helps you pick the right tool for the job." },
     { icon: FaThumbsUp, title: "Excellent Customer Service", body: "Friendly, professional service before and after every sale." },
-    { icon: FaLocationDot, title: "Convenient Nairobi Location", body: "Royal Palm Mall, Mfangano Street — easy to reach in the CBD." },
+    { icon: FaLocationDot, title: "Convenient Nairobi Location", body: "Royal Palm Mall, Mfangano Street - easy to reach in the CBD." },
   ];
   return (
     <section className="relative overflow-hidden py-20 bg-white">
@@ -197,7 +202,7 @@ function WhyUs() {
   );
 }
 
-/* ─────────────── Featured ─────────────── */
+/* --- Featured --- */
 function Featured({ onView }: { onView: (p: ProductDTO) => void }) {
   const { data: featured = [], isLoading } = useProducts({ featured: true });
 
@@ -229,7 +234,7 @@ function Featured({ onView }: { onView: (p: ProductDTO) => void }) {
   );
 }
 
-/* ─────────────── About Preview ─────────────── */
+/* --- About Preview --- */
 function AboutPreview() {
   return (
     <section className="py-20 bg-white">
@@ -263,7 +268,7 @@ function AboutPreview() {
   );
 }
 
-/* ─────────────── Testimonials ─────────────── */
+/* --- Testimonials --- */
 function Testimonials() {
   const items = [
     { name: "Peter Kamau", role: "Electrical Contractor", text: "JnB has become my go-to for wiring accessories and MCBs. Their prices beat anywhere else in town and the team really knows their stock." },
@@ -299,7 +304,7 @@ function Testimonials() {
   );
 }
 
-/* ─────────────── Location Preview ─────────────── */
+/* --- Location Preview --- */
 function LocationPreview() {
   return (
     <section className="py-20 bg-white">
@@ -342,21 +347,21 @@ function LocationPreview() {
   );
 }
 
-/* ─────────────── Final CTA ─────────────── */
+/* --- Final CTA --- */
 function FinalCTA() {
   return (
     <section className="py-16">
       <div className="container-x">
-        <div className="rounded-3xl bg-gradient-to-br from-accent to-orange-600 text-white p-10 md:p-14 text-center shadow-soft">
-          <h2 className="text-3xl md:text-4xl font-bold">Need Tools or Electrical Supplies?</h2>
-          <p className="mt-3 text-white/90 max-w-2xl mx-auto">
-            Talk to us — we'll help you find the right product at the right price, and get it to you fast.
+        <div className="cta-panel rounded-3xl text-white p-10 md:p-14 text-center shadow-soft">
+          <h2 className="text-3xl md:text-4xl font-bold text-white">Need Tools or Electrical Supplies?</h2>
+          <p className="mt-3 text-white/80 max-w-2xl mx-auto">
+            Talk to us - we'll help you find the right product at the right price, and get it to you fast.
           </p>
           <div className="mt-8 flex flex-wrap gap-3 justify-center">
-            <a href={whatsappHref()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white text-accent font-semibold px-6 py-3 hover:brightness-95 transition">
+            <a href={whatsappHref()} target="_blank" rel="noreferrer" className="btn-accent">
               <FaWhatsapp className="h-5 w-5" /> WhatsApp Now
             </a>
-            <a href={phoneHref} className="inline-flex items-center gap-2 rounded-full border-2 border-white text-white font-semibold px-6 py-3 hover:bg-white hover:text-accent transition">
+            <a href={phoneHref} className="inline-flex items-center gap-2 rounded-full border-2 border-white text-white font-semibold px-6 py-3 hover:bg-white hover:text-secondary transition">
               <FaPhone className="h-4 w-4" /> Call Us
             </a>
           </div>
@@ -366,7 +371,34 @@ function FinalCTA() {
   );
 }
 
-/* ─────────────── Shared ─────────────── */
+/* --- FAQ (answers the questions customers and AI assistants ask most) --- */
+function Faq() {
+  return (
+    <section className="py-20 bg-background" aria-labelledby="faq-heading">
+      <div className="container-x max-w-3xl">
+        <div className="text-center">
+          <span className="text-sm font-semibold text-primary uppercase tracking-wider">Quick answers</span>
+          <h2 id="faq-heading" className="mt-2 text-3xl md:text-4xl font-bold text-foreground">
+            Frequently asked questions
+          </h2>
+        </div>
+        <div className="mt-10 space-y-3">
+          {FAQ.map((f) => (
+            <details key={f.q} className="group rounded-2xl border border-border bg-white p-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+                <h3 className="text-base font-semibold text-foreground">{f.q}</h3>
+                <FaChevronDown className="h-3.5 w-3.5 shrink-0 text-primary transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* --- Shared --- */
 function SectionHeader({
   eyebrow, title, subtitle, align = "center",
 }: { eyebrow?: string; title: string; subtitle?: string; align?: "center" | "left" }) {

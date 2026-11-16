@@ -14,7 +14,7 @@ import type { ErrorComponentProps } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
-import { BUSINESS } from "@/data/business";
+import { BUSINESS, MAP, OPENING, SITE_URL } from "@/data/business";
 
 function NotFoundComponent() {
   return (
@@ -52,21 +52,73 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   );
 }
 
-const LOCAL_BUSINESS_JSONLD = {
+const SHARE_IMAGE = `${SITE_URL}/images/site/jnb-shop-interior.jpg`;
+const PAGE_TITLE = "JnB Power Tools & Digital Electronics - Nairobi";
+
+/**
+ * Structured data (schema.org) that tells search and AI answer engines,
+ * in plain machine-readable form, who we are, where we are and when we open.
+ */
+const SITE_JSONLD = {
   "@context": "https://schema.org",
-  "@type": "Store",
-  name: BUSINESS.name,
-  description: BUSINESS.description,
-  telephone: `+${BUSINESS.phone}`,
-  email: BUSINESS.email,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: `${BUSINESS.address.line1}, ${BUSINESS.address.line2}`,
-    addressLocality: BUSINESS.address.city,
-    addressCountry: BUSINESS.address.country,
-  },
-  openingHours: ["Mo-Fr 06:00-21:00", "Sa 06:00-21:00"],
-  areaServed: "Nairobi, Kenya",
+  "@graph": [
+    {
+      "@type": ["Store", "HardwareStore"],
+      "@id": `${SITE_URL}/#business`,
+      name: BUSINESS.name,
+      alternateName: BUSINESS.shortName,
+      url: SITE_URL,
+      description: BUSINESS.description,
+      slogan: BUSINESS.tagline,
+      image: SHARE_IMAGE,
+      logo: `${SITE_URL}/apple-touch-icon.png`,
+      telephone: `+${BUSINESS.phone}`,
+      email: BUSINESS.email,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: `${BUSINESS.address.line1}, ${BUSINESS.address.line2}`,
+        addressLocality: BUSINESS.address.city,
+        addressCountry: "KE",
+      },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: MAP.lat,
+        longitude: MAP.lng,
+      },
+      hasMap: MAP.placeUrl,
+      openingHoursSpecification: [
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: OPENING.days,
+          opens: OPENING.opens,
+          closes: OPENING.closes,
+        },
+      ],
+      areaServed: [
+        { "@type": "City", name: "Nairobi" },
+        { "@type": "Country", name: "Kenya" },
+      ],
+      currenciesAccepted: "KES",
+      knowsAbout: [
+        "Power tools",
+        "Solar systems",
+        "Electrical accessories",
+        "Electronics",
+        "Agricultural machinery",
+        "Salon and barber equipment",
+        "Locks and padlocks",
+        "Hardware",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: BUSINESS.name,
+      inLanguage: "en-KE",
+      publisher: { "@id": `${SITE_URL}/#business` },
+    },
+  ],
 };
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
@@ -74,14 +126,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "JnB Power Tools & Digital Electronics — Nairobi" },
+      // Tell phones this site is designed light, so browser "auto dark" modes leave it alone
+      { name: "color-scheme", content: "light" },
+      { name: "theme-color", content: "#102a43" },
+      { title: PAGE_TITLE },
       { name: "description", content: BUSINESS.description },
       { name: "author", content: BUSINESS.name },
+      {
+        name: "robots",
+        content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      },
       { property: "og:site_name", content: BUSINESS.name },
       { property: "og:type", content: "website" },
-      { property: "og:title", content: "JnB Power Tools & Digital Electronics — Nairobi" },
+      { property: "og:locale", content: "en_KE" },
+      { property: "og:title", content: PAGE_TITLE },
       { property: "og:description", content: BUSINESS.description },
+      { property: "og:image", content: SHARE_IMAGE },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: SHARE_IMAGE },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -94,7 +156,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" },
     ],
     scripts: [
-      { type: "application/ld+json", children: JSON.stringify(LOCAL_BUSINESS_JSONLD) },
+      { type: "application/ld+json", children: JSON.stringify(SITE_JSONLD) },
     ],
   }),
   shellComponent: RootShell,
