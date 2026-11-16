@@ -7,9 +7,9 @@ import { uniqueSlug } from "@/lib/slug";
 import { z } from "zod";
 import { getSupabaseAdmin, PRODUCT_IMAGE_BUCKET } from "@/lib/supabase";
 
-/* ─────────────────────────────────────────────────────────────
+/* -------------------------------------------------------------
    INPUT VALIDATION (the server never trusts what the browser sends)
-   ───────────────────────────────────────────────────────────── */
+   ------------------------------------------------------------- */
 
 function parseOrThrow<S extends z.ZodType>(schema: S, input: unknown): z.output<S> {
   const result = schema.safeParse(input);
@@ -45,9 +45,20 @@ const productSchema = z.object({
       z.object({
         url: z
           .string()
-          .url("Image URL is not valid")
+          .trim()
           .max(1000)
-          .refine((u) => u.startsWith("https://"), "Image URLs must use HTTPS"),
+          .refine((u) => {
+            // Pictures stored in this site's own /images folder
+            if (u.startsWith("/images/")) {
+              return !u.includes("..") && !u.includes("\\") && !u.includes("//");
+            }
+            // Uploaded pictures (Supabase) must be full https:// addresses
+            try {
+              return new URL(u).protocol === "https:";
+            } catch {
+              return false;
+            }
+          }, "Image URL is not valid"),
         alt: z.string().trim().min(1, "Every image needs alt text").max(200),
         storagePath: z.string().max(500).optional(),
         isPrimary: z.boolean().optional(),
@@ -60,9 +71,9 @@ type ProductInput = z.input<typeof productSchema>;
 
 const idSchema = z.object({ id: z.string().uuid("Invalid product id") });
 
-/* ─────────────────────────────────────────────────────────────
+/* -------------------------------------------------------------
    PUBLIC ENDPOINTS (Anyone can call these)
-   ───────────────────────────────────────────────────────────── */
+   ------------------------------------------------------------- */
 
 /** List all products (optionally filtered by featured) */
 export const listProducts = createServerFn({ method: "GET" })
@@ -86,7 +97,7 @@ export const listProducts = createServerFn({ method: "GET" })
         })),
       }));
     } catch (error) {
-      // Full detail stays in the server logs (Vercel → Logs). Visitors get a generic message.
+      // Full detail stays in the server logs (Vercel > Logs). Visitors get a generic message.
       console.error("Failed to fetch products:", error);
       throw new Error("Unable to load products right now. Please try again.");
     }
@@ -106,9 +117,9 @@ export const getProductBySlug = createServerFn({ method: "GET" })
     });
   });
 
-/* ─────────────────────────────────────────────────────────────
+/* -------------------------------------------------------------
    ADMIN ENDPOINTS (Requires Auth)
-   ───────────────────────────────────────────────────────────── */
+   ------------------------------------------------------------- */
 
 /** Create or Update a product */
 export const saveProduct = createServerFn({ method: "POST" })
