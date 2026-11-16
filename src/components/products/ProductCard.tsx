@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { MessageCircle, Eye, CheckCircle2, ShoppingCart, Check } from "@/components/icons";
 import { formatPrice } from "@/lib/utils";
 import type { ProductDTO } from "@/types";
@@ -51,7 +52,9 @@ export function ProductCard({ product, onView }: Props) {
 
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-semibold text-foreground text-base leading-snug line-clamp-2">
-          {product.name}
+          <Link to="/product/$slug" params={{ slug: product.slug }} className="hover:text-primary transition-colors">
+            {product.name}
+          </Link>
         </h3>
         <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2">
           {product.shortDescription}

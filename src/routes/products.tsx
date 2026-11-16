@@ -21,6 +21,7 @@ import { listCategories } from "@/functions/categories";
 import { formatPrice } from "@/lib/utils";
 import { ProductCard } from "@/components/products/ProductCard";
 import { ProductModal } from "@/components/ProductModal";
+import { SITE_URL } from "@/data/business";
 import type { ProductDTO } from "@/types";
 
 type Search = {
@@ -55,21 +56,21 @@ export const Route = createFileRoute("/products")({
   }),
   head: () => ({
     meta: [
-      { title: "Products — JnB Power Tools & Digital Electronics" },
+      { title: "Products - JnB Power Tools & Digital Electronics" },
       {
         name: "description",
         content:
-          "Browse power tools, solar, electrical accessories, agricultural machinery, salon and barber equipment, locks and hardware — all available at JnB in Nairobi.",
+          "Browse power tools, solar, electrical accessories, agricultural machinery, salon and barber equipment, locks and hardware - all available at JnB in Nairobi.",
       },
-      { property: "og:title", content: "Products — JnB Power Tools & Digital Electronics" },
+      { property: "og:title", content: "Products - JnB Power Tools & Digital Electronics" },
       {
         property: "og:description",
         content:
           "Full catalog: power tools, solar, electronics, hardware and more. Order on WhatsApp.",
       },
-      { property: "og:url", content: "/products" },
+      { property: "og:url", content: SITE_URL + "/products" },
     ],
-    links: [{ rel: "canonical", href: "/products" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/products" }],
   }),
   component: ProductsPage,
 });
@@ -241,7 +242,7 @@ function ProductsPage() {
                 <option value="featured">Sort: Featured</option>
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
-                <option value="name">Name: A–Z</option>
+                <option value="name">Name: A-Z</option>
               </select>
 
               <label className="inline-flex items-center gap-2 text-sm font-medium px-4 h-12 rounded-full border border-border bg-white cursor-pointer">
@@ -287,7 +288,7 @@ function ProductsPage() {
               <h2 className="text-2xl md:text-3xl font-bold">Offers & Promotions</h2>
             </div>
             <p className="mt-2 text-muted-foreground text-sm">
-              Limited-time discounts — while stocks last.
+              Limited-time discounts - while stocks last.
             </p>
             <div className="mt-6 flex gap-5 overflow-x-auto pb-4 snap-x md:grid md:overflow-visible md:grid-cols-3 lg:grid-cols-4">
               {offers.map(({ product, discount, wasPrice }) => (

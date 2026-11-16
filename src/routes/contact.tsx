@@ -2,19 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send, CheckCircle2 } from "@/components/icons";
 import { useState } from "react";
 import { z } from "zod";
-import { BUSINESS, phoneHref, emailHref, whatsappHref, MAP } from "@/data/business";
+import { BUSINESS, SITE_URL, phoneHref, emailHref, whatsappHref, MAP } from "@/data/business";
 import { submitContact } from "@/lib/contact.functions";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact JnB Power Tools & Digital Electronics — Nairobi" },
+      { title: "Contact JnB Power Tools & Digital Electronics - Nairobi" },
       { name: "description", content: "Get in touch with JnB Power Tools in Nairobi. Call, WhatsApp, email or visit our shop at Royal Palm Mall, Mfangano Street." },
       { property: "og:title", content: "Contact JnB Power Tools" },
       { property: "og:description", content: "Reach us via phone, WhatsApp, email or visit our shop in Nairobi CBD." },
-      { property: "og:url", content: "/contact" },
+      { property: "og:url", content: SITE_URL + "/contact" },
     ],
-    links: [{ rel: "canonical", href: "/contact" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/contact" }],
   }),
   component: ContactPage,
 });
@@ -70,7 +70,7 @@ function ContactPage() {
     { icon: MessageCircle, title: "WhatsApp", value: `+${BUSINESS.whatsapp}`, href: whatsappHref() },
     { icon: Mail, title: "Email", value: BUSINESS.email, href: emailHref },
     { icon: MapPin, title: "Visit us", value: "Royal Palm Mall, Mfangano St", href: MAP.placeUrl },
-    { icon: Clock, title: "Hours", value: "Mon-Sat: 5:45am – 9pm", href: undefined },
+    { icon: Clock, title: "Hours", value: `Mon-Sat: ${BUSINESS.hours[0].time}`, href: undefined },
   ];
 
   return (
@@ -79,7 +79,7 @@ function ContactPage() {
         <div className="container-x max-w-3xl">
           <h1 className="text-4xl md:text-5xl font-bold">Contact JnB Power Tools & Digital Electronics</h1>
           <p className="mt-4 text-white/80 text-lg">
-            Whether you need product advice, a quote, or help placing an order — we're here to help.
+            Whether you need product advice, a quote, or help placing an order - we're here to help.
             Reach us the way that suits you.
           </p>
         </div>
@@ -116,7 +116,7 @@ function ContactPage() {
 
               {status === "success" && (
                 <div role="status" className="mt-6 flex items-center gap-2 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 p-4 text-sm">
-                  <CheckCircle2 className="h-5 w-5 shrink-0" /> Thanks — your message was received. We'll be in touch.
+                  <CheckCircle2 className="h-5 w-5 shrink-0" /> Thanks - your message was received. We'll be in touch.
                 </div>
               )}
 
@@ -156,7 +156,7 @@ function ContactPage() {
                 </p>
                 {status === "error" && (
                   <p role="alert" className="text-sm text-destructive text-center">
-                    {serverError || "Couldn't send — please try WhatsApp or call."}
+                    {serverError || "Couldn't send - please try WhatsApp or call."}
                   </p>
                 )}
               </form>

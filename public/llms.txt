@@ -1,0 +1,27 @@
+# JnB Power Tools & Digital Electronics
+
+> Trusted Nairobi supplier of genuine power tools, agricultural machinery, electronics, electrical accessories, solar systems, salon and barber equipment, locks, padlocks and general hardware. Serves contractors, technicians, electricians, farmers, businesses and homeowners.
+
+## Key facts
+
+- Business type: hardware and electronics store (retail)
+- Address: Shop AG11, Magic Business Centre (Royal Palm Mall), Mfangano Street, Nairobi CBD, Kenya
+- Opening hours: Monday to Saturday, 5:50 AM to 9:30 PM. Closed Sunday.
+- Phone and WhatsApp: +254 740 151 986
+- Email: jnbtools@gmail.com
+- Delivery: flat KSh 500 inside Nairobi; other counties quoted before dispatch; shop pickup available
+- Payment: pay on delivery or at pickup (online M-Pesa coming soon)
+- Brands include: Bosch, Makita, DeWalt, Yale, Schneider, Honda
+- Currency: Kenyan shillings (KSh)
+
+## Pages
+
+- [Home](https://www.jnbpowertools.co.ke/): overview, categories, featured products, FAQ
+- [Products](https://www.jnbpowertools.co.ke/products): full catalogue by category with prices and stock status
+- Product pages: every product has its own page at https://www.jnbpowertools.co.ke/product/{product-name} with price in KSh, brand, specifications, features and stock status (all listed in the sitemap)
+- [Contact](https://www.jnbpowertools.co.ke/contact): phone, WhatsApp, email, map and message form
+- [Sitemap](https://www.jnbpowertools.co.ke/sitemap.xml)
+
+## Product categories
+
+Power tools and general hardware; agricultural machinery; electronics; electrical accessories; solar systems; salon equipment; barber equipment; locks and padlocks.
