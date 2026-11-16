@@ -124,6 +124,8 @@ export const productImagesRelations = relations(productImages, ({ one }) => ({
 }));
 
 /* ─────────── Customers ─────────── */
+// NOTE: .enableRLS() on the tables below tells drizzle-kit that row level
+// security is intentional, so `db:push` will not try to switch it off.
 export const customers = pgTable("customers", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(), // always stored lowercase
@@ -135,7 +137,7 @@ export const customers = pgTable("customers", {
   passwordChangedAt: timestamp("password_changed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}).enableRLS();
 
 /* ─────────── Customer delivery addresses ─────────── */
 export const customerAddresses = pgTable(
@@ -157,7 +159,8 @@ export const customerAddresses = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [index("customer_addresses_customer_idx").on(t.customerId)],
-);
+).enableRLS();
+
 /* ─────────── Password reset tokens ─────────── */
 export const passwordResetTokens = pgTable(
   "password_reset_tokens",
@@ -172,14 +175,14 @@ export const passwordResetTokens = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [index("password_reset_customer_idx").on(t.customerId)],
-);
+).enableRLS();
 
 /* ─────────── Rate limits ─────────── */
 export const rateLimits = pgTable("rate_limits", {
   key: text("key").primaryKey(), // e.g. "admin-login:203.0.113.5"
   count: integer("count").notNull().default(0),
   windowStart: timestamp("window_start", { withTimezone: true }).notNull().defaultNow(),
-});
+}).enableRLS();
 
 // ---------- Orders ----------
 // Prices are copied into the order at checkout (snapshot), so later price
@@ -219,7 +222,7 @@ export const orders = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("orders_customer_idx").on(t.customerId, t.createdAt)],
-);
+).enableRLS();
 
 export const orderItems = pgTable(
   "order_items",
@@ -235,7 +238,7 @@ export const orderItems = pgTable(
     imageUrl: text("image_url"),
   },
   (t) => [index("order_items_order_idx").on(t.orderId)],
-);
+).enableRLS();
 
 // ---------- Contact form messages ----------
 export const contactMessages = pgTable(
@@ -252,4 +255,4 @@ export const contactMessages = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("contact_messages_status_idx").on(t.status, t.createdAt)],
-);
+).enableRLS();
