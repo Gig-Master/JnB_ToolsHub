@@ -21,6 +21,7 @@ interface EmailMessage {
   subject: string;
   html: string;
   text: string;
+  replyTo?: string;
 }
 
 /** Returns true if Resend accepted the email. Never throws. */
@@ -45,6 +46,7 @@ export async function sendEmail(msg: EmailMessage): Promise<boolean> {
         subject: msg.subject,
         html: msg.html,
         text: msg.text,
+        reply_to: msg.replyTo,
       }),
       signal: AbortSignal.timeout(8000),
     });

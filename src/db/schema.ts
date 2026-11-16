@@ -236,3 +236,20 @@ export const orderItems = pgTable(
   },
   (t) => [index("order_items_order_idx").on(t.orderId)],
 );
+
+// ---------- Contact form messages ----------
+export const contactMessages = pgTable(
+  "contact_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    phone: text("phone").notNull(), // normalised: 2547XXXXXXXX
+    email: text("email"),
+    subject: text("subject").notNull(),
+    message: text("message").notNull(),
+    status: text("status").notNull().default("new"), // new | handled
+    handledAt: timestamp("handled_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("contact_messages_status_idx").on(t.status, t.createdAt)],
+);

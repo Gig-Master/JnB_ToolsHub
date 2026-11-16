@@ -23,6 +23,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminMessagesRouteImport } from './routes/admin/messages'
 import { Route as AdminOrdersRouteImport } from './routes/admin/orders'
 import { Route as OrderOrderNumberRouteImport } from './routes/order.$orderNumber'
 
@@ -96,6 +97,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMessagesRoute = AdminMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminOrdersRoute = AdminOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/order/$orderNumber': typeof OrderOrderNumberRoute
   '/admin/': typeof AdminIndexRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/order/$orderNumber': typeof OrderOrderNumberRoute
   '/admin': typeof AdminIndexRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/order/$orderNumber': typeof OrderOrderNumberRoute
   '/admin/': typeof AdminIndexRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/sitemap.xml'
     | '/admin/login'
+    | '/admin/messages'
     | '/admin/orders'
     | '/order/$orderNumber'
     | '/admin/'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/sitemap.xml'
     | '/admin/login'
+    | '/admin/messages'
     | '/admin/orders'
     | '/order/$orderNumber'
     | '/admin'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/sitemap.xml'
     | '/admin/login'
+    | '/admin/messages'
     | '/admin/orders'
     | '/order/$orderNumber'
     | '/admin/'
@@ -333,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/messages': {
+      id: '/admin/messages'
+      path: '/messages'
+      fullPath: '/admin/messages'
+      preLoaderRoute: typeof AdminMessagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/orders': {
       id: '/admin/orders'
       path: '/orders'
@@ -352,12 +371,14 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMessagesRoute: typeof AdminMessagesRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
+  AdminMessagesRoute: AdminMessagesRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }

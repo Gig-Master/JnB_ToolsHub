@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { checkAdmin, logoutAdmin } from "@/functions/auth";
-import { LayoutDashboard, LogOut, ExternalLink, ShoppingBag } from "lucide-react";
+import { LayoutDashboard, LogOut, ExternalLink, ShoppingBag, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async ({ location }) => {
@@ -53,6 +53,13 @@ function AdminLayout() {
           >
             <ShoppingBag size={20} /> Orders
           </Link>
+          <Link
+            to="/admin/messages"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors [&.active]:bg-white/10"
+            activeProps={{ className: "active" }}
+          >
+            <Mail size={20} /> Messages
+          </Link>
         </nav>
         <div className="p-4 border-t border-white/10 space-y-2">
           <a href="/" target="_blank" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 text-sm text-slate-300">
@@ -67,7 +74,7 @@ function AdminLayout() {
       {/* Main Content */}
       <main className="flex-1 p-8">
         {/* Phone navigation (the sidebar is hidden on small screens) */}
-        <nav className="mb-6 flex gap-3 text-sm font-semibold md:hidden">
+        <nav className="mb-6 flex flex-wrap gap-3 text-sm font-semibold md:hidden">
           <Link
             to="/admin"
             activeOptions={{ exact: true }}
@@ -80,6 +87,12 @@ function AdminLayout() {
             className="rounded-full bg-white px-4 py-2 border border-slate-200"
           >
             Orders
+          </Link>
+          <Link
+            to="/admin/messages"
+            className="rounded-full bg-white px-4 py-2 border border-slate-200"
+          >
+            Messages
           </Link>
           <button onClick={handleLogout} className="ml-auto rounded-full px-4 py-2 text-red-500">
             Log out

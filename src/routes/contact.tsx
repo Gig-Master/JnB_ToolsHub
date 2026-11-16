@@ -30,10 +30,13 @@ const schema = z.object({
 function ContactPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [serverError, setServerError] = useState("");
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    if (status === "sending") return;
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const data = Object.fromEntries(fd) as Record<string, string>;
     const parsed = schema.safeParse(data);
     if (!parsed.success) {
@@ -43,12 +46,21 @@ function ContactPage() {
       return;
     }
     setErrors({});
+    setServerError("");
     setStatus("sending");
     try {
-      await submitContact({ data: parsed.data });
+     const res = await submitContact({
+        data: { ...parsed.data, website: String(data.contact_extra ?? "") },
+      });
+      if (!res.ok) {
+        setServerError(res.error);
+        setStatus("error");
+        return;
+      }
       setStatus("success");
-      (e.target as HTMLFormElement).reset();
+      form.reset();
     } catch {
+      setServerError("");
       setStatus("error");
     }
   }
@@ -103,12 +115,18 @@ function ContactPage() {
               <p className="mt-1 text-sm text-muted-foreground">We usually reply within a few hours during business hours.</p>
 
               {status === "success" && (
-                <div className="mt-6 flex items-center gap-2 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 p-4 text-sm">
-                  <CheckCircle2 className="h-5 w-5" /> Thanks — your message was received. We'll be in touch.
+                <div role="status" className="mt-6 flex items-center gap-2 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 p-4 text-sm">
+                  <CheckCircle2 className="h-5 w-5 shrink-0" /> Thanks — your message was received. We'll be in touch.
                 </div>
               )}
 
               <form onSubmit={onSubmit} noValidate className="mt-6 space-y-4">
+                {/* Hidden trap field for bots. Real visitors never see or fill this. */}
+                <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+                <label htmlFor="contact_extra">Leave this field empty</label>
+              <input id="contact_extra" name="contact_extra" type="text" tabIndex={-1} autoComplete="off" />
+                </div>
+
                 <Field label="Full name" name="name" required error={errors.name} />
                 <Field label="Phone number" name="phone" type="tel" required error={errors.phone} />
                 <Field label="Email (optional)" name="email" type="email" error={errors.email} />
@@ -119,6 +137,7 @@ function ContactPage() {
                     id="message"
                     name="message"
                     rows={5}
+                    maxLength={1000}
                     required
                     className="mt-1.5 w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                   />
@@ -132,8 +151,13 @@ function ContactPage() {
                   <Send className="h-4 w-4" />
                   {status === "sending" ? "Sending..." : "Send message"}
                 </button>
+                <p className="text-center text-xs text-muted-foreground">
+                  We only use your details to reply to your message.
+                </p>
                 {status === "error" && (
-                  <p className="text-sm text-destructive text-center">Couldn't send — please try WhatsApp or call.</p>
+                  <p role="alert" className="text-sm text-destructive text-center">
+                    {serverError || "Couldn't send — please try WhatsApp or call."}
+                  </p>
                 )}
               </form>
             </div>
@@ -141,7 +165,6 @@ function ContactPage() {
             {/* Map + quick actions */}
             <div className="space-y-6">
               <div className="rounded-2xl overflow-hidden aspect-video bg-muted shadow-card">
-                {/* PLACEHOLDER_MAP_IFRAME — replace src with real Google Maps embed */}
                 <iframe
                   title="JnB Power Tools location on Google Maps"
                   src={MAP.embedUrl}
